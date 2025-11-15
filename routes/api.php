@@ -6,6 +6,7 @@ use App\Http\Controllers\API\V1\Dashboard\Media\MediaController;
 use App\Http\Controllers\API\V1\Dashboard\Slider\SliderController;
 
   Route::prefix('v1/admin')->group(function () {
+        Route::post('/sliders/changeStatus/{id}',[SliderController::class ,'changeStatus']);
         Route::apiResources([
                 "sliders"=> SliderController::class,
                 "media"=> MediaController::class,
