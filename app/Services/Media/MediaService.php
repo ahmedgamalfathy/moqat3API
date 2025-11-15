@@ -56,7 +56,7 @@ class MediaService {
     if(isset($data['path']) && $data['path'] instanceof UploadedFile){
     $path =$this->uploadService->uploadFile($data['path'], 'media');
     }
-    $media->type=$data['type'];
+    $media->type=$data['type']??MediaType::PHOTO->value;
     $media->path = $path;
     $media->category = $data['category'];
     $media->save();
