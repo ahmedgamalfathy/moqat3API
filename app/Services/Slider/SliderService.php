@@ -61,6 +61,7 @@ public function updateSlider(int $id, array $data)
    $slider->start_date =$data['startDate'] ?? null;
    $slider->end_date =$data['endDate'] ?? null;
    $slider->save();
+    Media::where('slider_id', $slider->id)->update(['slider_id' => null]);
    foreach ($data['sliderItems'] as $mediaId) {
         $media = Media::findOrFail($mediaId);
         $media->slider_id = $slider->id;
