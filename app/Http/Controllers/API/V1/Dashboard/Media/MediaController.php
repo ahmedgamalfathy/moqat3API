@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\API\V1\Dashboard\Media;
 
+use App\Enums\ResponseCode\HttpStatusCode;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\Media\MediaService;
 use App\Http\Requests\Media\CreateMediaRequest;
 use App\Http\Requests\Media\UpdateMediaRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 // use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use League\Uri\Http;
 
 class MediaController extends Controller
 {
@@ -44,8 +47,14 @@ class MediaController extends Controller
      */
     public function store(CreateMediaRequest $createMediaRequest)
     {
+        try {
         $this->mediaService->createMedia($createMediaRequest->validated());
         return ApiResponse::success([],__('crud.created'));
+        }catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
+         return ApiResponse::error(__('crud.not_found'),[],HttpStatusCode::NOT_FOUND);
+        }catch (\Throwable $th) {
+         return ApiResponse::error(__('crud.server_error'),$th->getMessage());
+        }
     }
 
     /**
@@ -53,8 +62,14 @@ class MediaController extends Controller
      */
     public function show(int $id)
     {
-        $media =$this->mediaService->editMedia($id);
-        return ApiResponse::success($media);
+        try {
+         $media =$this->mediaService->editMedia($id);
+         return ApiResponse::success($media);
+        }catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
+         return ApiResponse::error(__('crud.not_found'),[],HttpStatusCode::NOT_FOUND);
+        }catch (\Throwable $th) {
+         return ApiResponse::error(__('crud.server_error'),$th->getMessage());
+        }
     }
 
     /**
@@ -62,8 +77,15 @@ class MediaController extends Controller
      */
     public function update(UpdateMediaRequest $updateMediaRequest, int $id)
     {
-        $this->mediaService->updateMedia($id,$updateMediaRequest->validated());
-        return ApiResponse::success([],__('crud.updated'));
+      try{
+            $this->mediaService->updateMedia($id,$updateMediaRequest->validated());
+            return ApiResponse::success([],__('crud.updated'));
+       }catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
+         return ApiResponse::error(__('crud.not_found'),[],HttpStatusCode::NOT_FOUND);
+        }catch (\Throwable $th) {
+         return ApiResponse::error(__('crud.server_error'),$th->getMessage());
+        }
+
     }
 
     /**
@@ -71,7 +93,14 @@ class MediaController extends Controller
      */
     public function destroy(string $id)
     {
+        try {
         $this->mediaService->deleteMedia($id);
         return ApiResponse::success([],__('crud.deleted'));
+        }catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
+         return ApiResponse::error(__('crud.not_found'),[],HttpStatusCode::NOT_FOUND);
+        }catch (\Throwable $th) {
+         return ApiResponse::error(__('crud.server_error'),$th->getMessage());
+        }
+
     }
 }
