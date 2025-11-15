@@ -95,9 +95,11 @@ class SliderController extends Controller
         try{
         $this->sliderService->changeSliderStatus($id,$request->isActive);
         return ApiResponse::success([], __('crud.updated'));
+        }catch (ModelNotFoundException $th) {
+        return  ApiResponse::error(__('crud.not_found'),[],HttpStatusCode::NOT_FOUND);
         }catch (\Exception $e) {
         DB::rollBack();
-        return ApiResponse::error(__('crud.server_error'),[],HttpStatusCode::INTERNAL_SERVER_ERROR);
+        return ApiResponse::error(__('crud.server_error'),$e->getMessage(),HttpStatusCode::INTERNAL_SERVER_ERROR);
         }
     }
 }
